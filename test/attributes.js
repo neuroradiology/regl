@@ -144,6 +144,31 @@ tape('attributes', function (t) {
       },
 
       count: 3
+    },
+
+    pointerRaw: {
+      expected: [
+        0, 1, 0, 1, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0
+      ],
+
+      data: {
+        buffer: new Uint8Array([
+          0, 0,
+          1, 0,
+          2, 0,
+          3, 0,
+          4, 0,
+          2, 2
+        ]),
+        offset: 2,
+        stride: 4
+      },
+
+      count: 3
     }
   }
 
@@ -324,6 +349,7 @@ tape('attributes', function (t) {
   })
 
   regl.destroy()
+  t.equals(gl.getError(), 0, 'error ok')
   createContext.destroy(gl)
   t.end()
 })

@@ -49,6 +49,7 @@ module.exports = function wrapREGL (args) {
 
   var gl = config.gl
   var glAttributes = gl.getContextAttributes()
+  var contextLost = gl.isContextLost()
 
   var extensionState = wrapExtensions(gl, config)
   if (!extensionState) {
@@ -137,6 +138,10 @@ module.exports = function wrapREGL (args) {
   var canvas = gl.canvas
 
   var rafCallbacks = []
+  var lossCallbacks = []
+  var restoreCallbacks = []
+  var destroyCallbacks = [config.onDestroy]
+
   var activeRAF = null
   function handleRAF () {
     if (rafCallbacks.length === 0) {
@@ -184,11 +189,48 @@ module.exports = function wrapREGL (args) {
   }
 
   function handleContextLoss (event) {
-    // TODO
+    event.preventDefault()
+
+    // set context lost flag
+    contextLost = true
+
+    // pause request animation frame
+    stopRAF()
+
+    // lose context
+    lossCallbacks.forEach(function (cb) {
+      cb()
+    })
   }
 
   function handleContextRestored (event) {
-    // TODO
+    // clear error code
+    gl.getError()
+
+    // clear context lost flag
+    contextLost = false
+
+    // refresh state
+    extensionState.restore()
+    shaderState.restore()
+    bufferState.restore()
+    textureState.restore()
+    renderbufferState.restore()
+    framebufferState.restore()
+    if (timer) {
+      timer.restore()
+    }
+
+    // refresh state
+    core.procs.refresh()
+
+    // restart RAF
+    startRAF()
+
+    // restore context
+    restoreCallbacks.forEach(function (cb) {
+      cb()
+    })
   }
 
   if (canvas) {
@@ -216,7 +258,9 @@ module.exports = function wrapREGL (args) {
       timer.clear()
     }
 
-    config.onDestroy()
+    destroyCallbacks.forEach(function (cb) {
+      cb()
+    })
   }
 
   function compileProcedure (options) {
@@ -228,6 +272,11 @@ module.exports = function wrapREGL (args) {
       delete result.uniforms
       delete result.attributes
       delete result.context
+
+      if ('stencil' in result && result.stencil.op) {
+        result.stencil.opBack = result.stencil.opFront = result.stencil.op
+        delete result.stencil.op
+      }
 
       function merge (name) {
         if (name in result) {
@@ -284,6 +333,8 @@ module.exports = function wrapREGL (args) {
     var batch = compiled.batch
     var scope = compiled.scope
 
+    // FIXME: we should modify code generation for batch commands so this
+    // isn't necessary
     var EMPTY_ARRAY = []
     function reserve (count) {
       while (EMPTY_ARRAY.length < count) {
@@ -294,6 +345,9 @@ module.exports = function wrapREGL (args) {
 
     function REGLCommand (args, body) {
       var i
+      if (contextLost) {
+        check.raise('context lost')
+      }
       if (typeof args === 'function') {
         return scope.call(this, null, args, 0)
       } else if (typeof body === 'function') {
@@ -401,7 +455,7 @@ module.exports = function wrapREGL (args) {
 
   function poll () {
     contextState.tick += 1
-    contextState.time = (clock() - START_TIME) / 1000.0
+    contextState.time = now()
     pollViewport()
     core.procs.poll()
   }
@@ -414,7 +468,45 @@ module.exports = function wrapREGL (args) {
     }
   }
 
+  function now () {
+    return (clock() - START_TIME) / 1000.0
+  }
+
   refresh()
+
+  function addListener (event, callback) {
+    check.type(callback, 'function', 'listener callback must be a function')
+
+    var callbacks
+    switch (event) {
+      case 'frame':
+        return frame(callback)
+      case 'lost':
+        callbacks = lossCallbacks
+        break
+      case 'restore':
+        callbacks = restoreCallbacks
+        break
+      case 'destroy':
+        callbacks = destroyCallbacks
+        break
+      default:
+        check.raise('invalid event, must be one of frame,lost,restore,destroy')
+    }
+
+    callbacks.push(callback)
+    return {
+      cancel: function () {
+        for (var i = 0; i < callbacks.length; ++i) {
+          if (callbacks[i] === callback) {
+            callbacks[i] = callbacks[callbacks.length - 1]
+            callbacks.pop()
+            return
+          }
+        }
+      }
+    }
+  }
 
   var regl = extend(compileProcedure, {
     // Clear current FBO
@@ -430,9 +522,11 @@ module.exports = function wrapREGL (args) {
 
     // Resources
     buffer: function (options) {
-      return bufferState.create(options, GL_ARRAY_BUFFER)
+      return bufferState.create(options, GL_ARRAY_BUFFER, false, false)
     },
-    elements: elementState.create,
+    elements: function (options) {
+      return elementState.create(options, false)
+    },
     texture: textureState.create2D,
     cube: textureState.createCube,
     renderbuffer: renderbufferState.create,
@@ -444,6 +538,7 @@ module.exports = function wrapREGL (args) {
 
     // Frame rendering
     frame: frame,
+    on: addListener,
 
     // System limits
     limits: limits,
@@ -467,6 +562,9 @@ module.exports = function wrapREGL (args) {
         timer.update()
       }
     },
+
+    // Current time
+    now: now,
 
     // regl Statistics Information
     stats: stats

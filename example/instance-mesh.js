@@ -1,6 +1,8 @@
 /*
-  In this example, it is shown how you can draw a bunch of bunny meshes using the
-  instancing feature of regl.
+  tags: instancing, basic
+
+  <p> In this example, it is shown how you can draw a bunch of bunny meshes using the
+  instancing feature of regl. </p>
 */
 
 const mat4 = require('gl-mat4')

@@ -1,3 +1,10 @@
+/*
+  tags: basic
+
+  <p>This examples demonstrates scopes</p>
+
+ */
+
 const regl = require('../regl')()
 
 regl.clear({

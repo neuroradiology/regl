@@ -1,12 +1,14 @@
 /*
-  This example is a simple implementation of deferred shading.
+  tags: advanced, fbo, lighting, mrt
 
-  The focus of this implementation was readability, so it is not an
+  <p> This example is a simple implementation of deferred shading. </p>
+
+  <p> The focus of this implementation was readability, so it is not an
   optimized implementation, and can certainly be made more efficient.
   (by for instance getting rid of the "position" render target.
-  It can be computed from the depth buffer. )
+  It can be computed from the depth buffer. ) </p>
 
-  This example demonstrates the usage of Multiple-render targets in regl.
+  <p> This example demonstrates the usage of Multiple-render targets in regl. </p>
  */
 const webglCanvas = document.body.appendChild(document.createElement('canvas'))
 const fit = require('canvas-fit')
@@ -151,8 +153,8 @@ const drawDirectionalLight = regl({
     position: [ -4, -4, 4, -4, 0, 4 ]
   },
   uniforms: {
-    albedoTex: () => fbo.color[0],
-    normalTex: () => fbo.color[1],
+    albedoTex: fbo.color[0],
+    normalTex: fbo.color[1],
     ambientLight: [0.3, 0.3, 0.3],
     diffuseLight: [0.7, 0.7, 0.7],
     lightDir: [0.39, 0.87, 0.29]
@@ -217,9 +219,9 @@ const drawPointLight = regl({
     gl_Position = pos;
   }`,
   uniforms: {
-    albedoTex: () => fbo.color[0],
-    normalTex: () => fbo.color[1],
-    positionTex: () => fbo.color[2],
+    albedoTex: fbo.color[0],
+    normalTex: fbo.color[1],
+    positionTex: fbo.color[2],
     ambientLight: regl.prop('ambientLight'),
     diffuseLight: regl.prop('diffuseLight'),
     lightPosition: regl.prop('translate'),

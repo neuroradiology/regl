@@ -1,3 +1,9 @@
+/*
+  tags: shadows, fbo, advanced
+
+  <p>This example shows how you can render a shadow map for a directional light source in regl.</p>
+ */
+
 const webglCanvas = document.body.appendChild(document.createElement('canvas'))
 const fit = require('canvas-fit')
 const regl = require('../regl')({
@@ -118,7 +124,7 @@ const drawNormal = regl({
                        viewportWidth / viewportHeight,
                        0.01,
                        2000),
-    shadowMap: () => fbo.color[0],
+    shadowMap: fbo,
     minBias: () => 0.005,
     maxBias: () => 0.03
   },

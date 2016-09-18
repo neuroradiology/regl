@@ -1,3 +1,10 @@
+/*
+  tags: basic
+
+  <p>This example implements a simple 2D tiled sprite renderer.</p>
+
+ */
+
 const regl = require('../regl')()
 const mouse = require('mouse-change')()
 

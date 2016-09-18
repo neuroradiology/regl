@@ -71,16 +71,18 @@ tape('stencil', function (t) {
     same(gl.STENCIL_WRITEMASK, flags.mask, 'mask')
 
     function sameOp (pname, name, face) {
-      same(pname, stencilOps[flags[face][name]], face + '.' + name)
+      same(pname,
+        stencilOps.op ? stencilOps.op[name] : stencilOps[flags[face][name]],
+        face + '.' + name)
     }
 
     sameOp(gl.STENCIL_FAIL, 'fail', 'opFront')
     sameOp(gl.STENCIL_PASS_DEPTH_FAIL, 'zfail', 'opFront')
-    sameOp(gl.STENCIL_PASS_DEPTH_PASS, 'pass', 'opFront')
+    sameOp(gl.STENCIL_PASS_DEPTH_PASS, 'zpass', 'opFront')
 
     sameOp(gl.STENCIL_BACK_FAIL, 'fail', 'opBack')
     sameOp(gl.STENCIL_BACK_PASS_DEPTH_FAIL, 'zfail', 'opBack')
-    sameOp(gl.STENCIL_BACK_PASS_DEPTH_PASS, 'pass', 'opBack')
+    sameOp(gl.STENCIL_BACK_PASS_DEPTH_PASS, 'zpass', 'opBack')
   }
 
   var permutations = [
@@ -94,13 +96,13 @@ tape('stencil', function (t) {
       mask: 0xff,
       opFront: {
         fail: 'keep',
-        zfail: 'keep',
-        pass: 'keep'
+        zfail: 'replace',
+        zpass: 'keep'
       },
       opBack: {
         fail: 'keep',
         zfail: 'keep',
-        pass: 'keep'
+        zpass: 'keep'
       }
     },
     {
@@ -114,15 +116,53 @@ tape('stencil', function (t) {
       opFront: {
         fail: 'invert',
         zfail: 'increment',
-        pass: 'increment wrap'
+        zpass: 'increment wrap'
       },
       opBack: {
         fail: 'zero',
         zfail: 'decrement',
-        pass: 'decrement wrap'
+        zpass: 'decrement wrap'
+      }
+    },
+    {
+      enable: true,
+      func: {
+        cmp: 'always',
+        ref: 0,
+        mask: 0xff
+      },
+      mask: 0xff,
+      op: {
+        fail: 'keep',
+        zfail: 'replace',
+        zpass: 'keep'
       }
     }
   ]
+
+  // we need to make sure that we test for all possible values of cmp.
+  Object.keys(compareFuncs).forEach(function (cmp) {
+    permutations.push({
+      enable: true,
+      func: {
+        cmp: cmp,
+        ref: 0,
+        mask: 0xff
+      },
+      mask: 0xff,
+      opFront: {
+        fail: 'keep',
+        zfail: 'keep',
+        zpass: 'keep'
+      },
+      opBack: {
+        fail: 'keep',
+        zfail: 'keep',
+        zpass: 'keep'
+      }
+    }
+    )
+  })
 
   var staticOptions = {
     frag: [
@@ -165,25 +205,72 @@ tape('stencil', function (t) {
     }
   }, staticOptions))
 
-  permutations.forEach(function (params) {
+  permutations.forEach(function (params, i) {
+    if (params.op) {
+      return
+    }
     dynamicDraw(params)
-    testFlags('dynamic 1-shot - ', params)
+    testFlags('dynamic 1-shot - #' + i + ' - x', params)
   })
 
-  permutations.forEach(function (params) {
+  permutations.forEach(function (params, i) {
+    if (params.op) {
+      return
+    }
     dynamicDraw([params])
-    testFlags('batch - ', params)
+    testFlags('batch - #' + i + ' - x', params)
   })
 
-  permutations.forEach(function (params) {
+  permutations.forEach(function (params, i) {
     var staticDraw = regl(extend({
       stencil: params
     }, staticOptions))
     staticDraw()
-    testFlags('static - ', params)
+    testFlags('static - #' + i + ' - x ', params)
+  })
+
+  // now test nested dynamic properties:
+
+  var nestedDynamicDraw = regl(extend({
+    stencil: {
+      enable: regl.prop('enable'),
+      func: {
+        cmp: regl.prop('func.cmp'),
+        ref: regl.prop('func.ref'),
+        mask: regl.prop('func.mask')
+      },
+      mask: regl.prop('mask'),
+      opFront: {
+        fail: regl.prop('opFront.fail'),
+        zfail: regl.prop('opFront.zfail'),
+        zpass: regl.prop('opFront.zpass')
+      },
+      opBack: {
+        fail: regl.prop('opBack.fail'),
+        zfail: regl.prop('opBack.zfail'),
+        zpass: regl.prop('opBack.zpass')
+      }
+    }
+  }, staticOptions))
+
+  permutations.forEach(function (params, i) {
+    if (params.op) {
+      return
+    }
+    nestedDynamicDraw(params)
+    testFlags('nested dynamic 1-shot - #' + i + ' - ', params)
+  })
+
+  permutations.forEach(function (params, i) {
+    if (params.op) {
+      return
+    }
+    nestedDynamicDraw([params])
+    testFlags('nested batch - #' + i + ' - ', params)
   })
 
   regl.destroy()
+  t.equals(gl.getError(), 0, 'error ok')
   createContext.destroy(gl)
   t.end()
 })

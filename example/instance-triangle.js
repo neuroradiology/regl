@@ -1,6 +1,8 @@
 /*
-  In this example, it is shown how you can draw a bunch of triangles using the
-  instancing feature of regl.
+  tags: instancing, basic
+
+  <p> In this example, it is shown how you can draw a bunch of triangles using the
+  instancing feature of regl. </p>
  */
 const regl = require('../regl')({extensions: ['angle_instanced_arrays']})
 

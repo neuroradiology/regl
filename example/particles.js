@@ -1,3 +1,9 @@
+/*
+  tags: basic
+
+  <p>This example show how you can render point particles in regl</p>
+ */
+
 const regl = require('../regl')()
 const mat4 = require('gl-mat4')
 const hsv2rgb = require('hsv2rgb')

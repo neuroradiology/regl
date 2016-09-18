@@ -1,3 +1,10 @@
+/*
+  tags: basic
+
+  <p>This example shows how to render a 360 panoramic environment map.</p>
+
+ */
+
 const regl = require('../regl')()
 const mat4 = require('gl-mat4')
 const bunny = require('bunny')

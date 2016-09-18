@@ -1,3 +1,10 @@
+/*
+  tags: fbo, basic
+
+  <p>This example implements the game of life in regl.</p>
+
+ */
+
 const regl = require('../regl')()
 
 const RADIUS = 512
@@ -60,7 +67,7 @@ const setupQuad = regl({
   },
 
   uniforms: {
-    prevState: ({tick}) => state[tick % 2].color[0]
+    prevState: ({tick}) => state[tick % 2]
   },
 
   depth: { enable: false },

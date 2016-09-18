@@ -1,4 +1,8 @@
-// This example shows how to use copyTexImage2D to implement feedback effects
+/*
+  tags: basic
+
+ <p> This example shows how to use copyTexImage2D to implement feedback effects </p>
+ */
 
 const regl = require('../regl')()
 const mouse = require('mouse-change')()

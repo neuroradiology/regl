@@ -1,3 +1,10 @@
+/*
+  tags: basic
+
+  <p>This example shows how you can use mipmaps in regl.</p>
+
+ */
+
 const regl = require('../regl')()
 
 const drawCheckerboard = regl({
@@ -35,7 +42,7 @@ const drawCheckerboard = regl({
     tick: ({tick}) => 0.005 * tick,
 
     texture: regl.texture({
-      min: 'nearest mipmap linear',
+      min: 'linear mipmap linear',
       mag: 'nearest',
       wrap: 'repeat',
       data: [

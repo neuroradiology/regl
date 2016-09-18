@@ -1,10 +1,13 @@
 /*
-In this example, we use the mass-spring model described by Thomas Jakobsen to implement
-a simple cloth simulation.
+  tags: physics, advanced
 
-More info here:
-http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm
-http://gamedevelopment.tutsplus.com/tutorials/simulate-fabric-and-ragdolls-with-simple-verlet-integration--gamedev-519
+<p>In this example, we use the mass-spring model described by Thomas Jakobsen to implement
+a simple cloth simulation. It is also demonstrated how we can manage a dynamic mesh in regl. <p>
+
+<p> You can read more about cloth simulation <a href="http://graphics.cs.cmu.edu/nsp/course/15-869/2006/papers/jakobsen.htm">here</a> and
+<a href="http://gamedevelopment.tutsplus.com/tutorials/simulate-fabric-and-ragdolls-with-simple-verlet-integration--gamedev-519">here</a>
+
+</p>
  */
 
 const canvas = document.body.appendChild(document.createElement('canvas'))

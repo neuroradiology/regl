@@ -1,3 +1,10 @@
+/*
+  tags: basic
+
+  <p>This example shows how you can load and draw a texture in regl</p>
+
+ */
+
 const regl = require('../regl')()
 const baboon = require('baboon-image')
 

@@ -1,3 +1,10 @@
+/*
+  tags: advanced, fbo
+
+  <p>This example shows how you can render reflections using cubic framebuffers.</p>
+
+ */
+
 const regl = require('../regl')()
 const mat4 = require('gl-mat4')
 const bunny = require('bunny')
@@ -161,7 +168,7 @@ const drawBunny = regl({
     projection: regl.context('projection'),
     eye: regl.context('eye'),
     tint: regl.prop('tint'),
-    envMap: bunnyFBO.color[0],
+    envMap: bunnyFBO,
     model: (context, {position}) => mat4.translate(
       [], mat4.identity([]), position)
   }
@@ -196,7 +203,7 @@ const drawTeapot = regl({
     projection: regl.context('projection'),
     eye: regl.context('eye'),
     tint: regl.prop('tint'),
-    envMap: teapotFBO.color[0],
+    envMap: teapotFBO,
     model: (context, {position}) => mat4.translate([], mat4.identity([]), position)
   }
 })

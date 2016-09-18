@@ -1,9 +1,12 @@
 /*
-  This example shows how you can render shadows for point-lights using `regl.framebufferCube`
+  tags: shadows, fbo, advanced
 
-  You can read more about shadows for point-lights here:
-  http://http.developer.nvidia.com/GPUGems/gpugems_ch12.html
-  http://learnopengl.com/#!Advanced-Lighting/Shadows/Point-Shadows
+  <p>This example shows how you can render shadows for point-lights using `regl.framebufferCube` </p>
+
+  <p>
+  You can read more about shadows for point-lights <a href="http://http.developer.nvidia.com/GPUGems/gpugems_ch12.html">here</a> and
+<a href="http://learnopengl.com/#!Advanced-Lighting/Shadows/Point-Shadows">here</a>
+  </p>
 */
 
 const webglCanvas = document.body.appendChild(document.createElement('canvas'))
@@ -151,7 +154,7 @@ const drawNormal = regl({
                        viewportWidth / viewportHeight,
                        0.01,
                        1000),
-    shadowCube: shadowFbo.color[0]
+    shadowCube: shadowFbo
   },
   frag: `
   precision mediump float;

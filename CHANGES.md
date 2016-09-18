@@ -1,72 +1,55 @@
 # Release notes
 
-## Planned
+## 1.2.1
 
-* More performance monitoring hooks
-    + Track currently used resource requirements
-    + Output should be serializable -> works as input to constructor checks
+* Fixed bug with depth and stencil attachments being cleared
+* `regl.elements` now correctly infers count from length and vice-versa
 
-* Context loss
+## 1.2.0
 
-* Write comparison suite
+* Simplified flattening logic for textures and buffers
+* Viewport and scissor box can go outside drawing buffer
 
-* Make error messages more helpful
-    + When possible, try to suggest a fix for any errors which are raised
+## 1.1.1
 
-* Add a mechanism for users to specify minimum resource requirements (texture size, varying units, etc.)
-* More validation
-    + Should not be possible to write regl code that crashes on some systems
+* Fix bug with buffers and elements not updating type correctly
 
-* Benchmark suite
-    + Dashboard for test cases and benchmarks
-    + Create some more typical drawing examples
+## 1.1.0
 
-* A pretty printer for the generated code
+* Can now access format and filtering mode for textures and render buffers
 
-* Documentation
-    + All interface methods must be documented
-    + Examples for all major features
-    + Set up/quick start guides
-    + Examples on codepen/requirebin/regl.party
-    + Live coding videos on youtube
-    + Talks?  (what conferences can we present these results at?)
-    + Core library modules need better comments
-    + Work flow for development and testing needs documentation
+## 1.0.0
 
-* Testing
-    + Instancing
-    + Float textures / framebuffers and their filtering modes
-    + Constant attributes
-    + General code coverage
-    + Cube framebuffer objects
+* Support `stencil.op`
+* Rename stencil op `pass` to `zpass`
+* Attribute pointers can now use buffer literals
+* Implement basic context loss handling
+* Add `regl.on` for hooking events
+* Add `regl.now()`, allows sampling timer at high resolution outside of `regl.frame` in order to better synchronize DOM events
 
-* Build a website (preview at [regl.party](http://regl.party))
+## 0.11.0
 
-* Helper modules
-    + A camera helper module to make getting started with 3D code easier
-    + Debugging tools for inspecting the state of framebuffers, textures, buffers
-
-* Recipe book/example set
-    + Globe
-    + Compound scene
-    + Stencil shadows
-    + Point-light shadows(through cubic framebuffers)
-    + Turing patterns
-    + Asset loading (obj, ply, etc.)
-    + Water Reflection(though cubic-framebuffers)
-
-## Next
-
-* Cubic frame buffer objects
+* Cubic frame buffer objects!
+* Can now use framebuffers as textures in uniforms.  By default color attachment 0 is used.
+* Support for dynamic properties with nested objects like attributes
+* Alias `float16` for `half float` and `float32` for `float`
+* Many bug fixes and stability improvements
+* Website mostly works (preview at [regl.party](http://regl.party))
+* Gallery of examples with movies
 
 ## 0.10.0
 
 * Add a mechanism for managing webgl extensions
-    + Should be able to report errors when extensions are missing
-    + Allow users to disable extensions for testing/mocking
+
+  * Should be able to report errors when extensions are missing
+  * Allow users to disable extensions for testing/mocking
+
 * Doc clean up
+
 * Add more test cases for `regl.read()` and improve validation
+
 * Implement a standard method for handling context creation errors
+
 * Fix several bugs related to `regl.frame` cancellation
 
 ## 0.9.0
@@ -104,37 +87,57 @@
 ## 0.6.0
 
 * Allow for dynamic properties in viewport, scissor box and attributes
+
 * Switch order of arguments to dynamic functions, from (props, context) to (context, props)
-    + functions without a props argument become batch static
+
+  * functions without a props argument become batch static
+
 * Implement non-batch constant context, framebuffer and viewport
+
 * Batched scope rendering
+
 * Switch order of props and context variables for dynamic function args
+
 * function invocation now takes batch id as separate parameter
+
 * Support directly constructing elements and attributes from arrays
+
 * Allow individual attribute properties to be dynamic (eg buffers, offsets, etc.)
+
 * Code generation rewrite
-    + State flag polling is now inlined
-    + draw and batch inlined for static shaders
-    + constants are inlined
-    + fewer arguments passed to generated code
-    + Stop using separate arrays for stacks to manage state, instead state is saved onto the call stack
+
+  * State flag polling is now inlined
+  * draw and batch inlined for static shaders
+  * constants are inlined
+  * fewer arguments passed to generated code
+  * Stop using separate arrays for stacks to manage state, instead state is saved onto the call stack
+
 * Error reporting
-    + All error messages should link to command/resource declaration
-    + Improve validation of vertex attributes
-    + Improve validation of dynamic properties
+
+  * All error messages should link to command/resource declaration
+  * Improve validation of vertex attributes
+  * Improve validation of dynamic properties
+
 * Code quality and contributing
-    + Combined lib/state.js and lib/compile.js into lib/core.js
-    + Delete most of lib/attribute.js
-    + Update development documentation
+
+  * Combined lib/state.js and lib/compile.js into lib/core.js
+  * Delete most of lib/attribute.js
+  * Update development documentation
+
 * Expose limits for shader precision
 
 ## 0.5.0
 
 * Context variables
+
 * Use `this` argument effectively
-    * Should pass this to dynamic attributes and scope
+
+  * Should pass this to dynamic attributes and scope
+
 * Make scopes and dynamic attributes take same argument
+
 * Combine batchId with stats argument
+
 * Pass `this` to draw commands so that they can be stored as members
 
 ## 0.4.0

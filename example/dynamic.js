@@ -1,4 +1,8 @@
-// This example shows how to pass props to draw commands
+/*
+  tags: basic
+
+  <p> This example shows how to pass props to draw commands </p>
+*/
 
 const regl = require('../regl')()
 

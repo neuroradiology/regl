@@ -1,3 +1,10 @@
+/*
+  tags: basic, video
+
+  <p>This example shows how to overlay a chroma keyed video over a background rendered by regl. </p>
+
+ */
+
 const regl = require('../regl')()
 
 const drawDoggie = regl({
